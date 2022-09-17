@@ -15,6 +15,8 @@ impl<T> Default for OwningList<T> {
     }
 }
 
+unsafe impl<T> Send for OwningList<T> where T: Send {}
+
 impl<T> Debug for OwningList<T>
 where
     T: Debug,
@@ -183,5 +185,13 @@ mod tests {
         list.remove_ptr(one_ptr);
         let _one_ptr = list.prepend(1);
         list.move_to_head(two_ptr);
+    }
+
+    fn is_send<T: Send>(_: &T) {}
+
+    #[test]
+    fn ensure_is_send() {
+        let list = OwningList::<usize>::default();
+        is_send(&list);
     }
 }
